@@ -72,7 +72,7 @@ This will answer, both Django and WebSocket requests on port 80 using HTTP. Here
 into the WebSocket's main loop.
 
 This configuration works for testing uWSGI and low traffic sites. Since uWSGI then runs in one
-thread/process, blocking calls such as accessing the database, would also block all other HTTP
+thread/process, blocking calls such as accessing the database, would also block/delay all other incoming HTTP
 requests. Adding ``--gevent-monkey-patch`` to the command line may help here, but Postgres for
 instance requires to monkey patch its blocking calls with **gevent** using the psycogreen_ library.
 Moreover, only one CPU core is then used, and static files must be handled by another webserver.
@@ -128,7 +128,7 @@ For details refer to NGiNX's configuration on `WebSocket proxying`_.
 .. _WebSocket proxying: http://nginx.org/en/docs/http/websocket.html
 
 Since both uWSGI handlers create their own main loop, they also require their own application and
-different UNIX sockets. Create two adopter files, one for the Django loop, say ``wsgi_django.py``
+different UNIX sockets. Create two adapter files, one for the Django loop, say ``wsgi_django.py``
 
 .. code-block:: python
 
@@ -173,7 +173,7 @@ In this configuration the **uWSGI** server owns both main loops. To distinguish 
 normal requests, use uWSGI's `internal routing`_ capabilities.
 
 First create the two applications, ``wsgi_django.py`` and ``wsgi_websocket.py`` using the same code
-as in the above example. These are the two entry points for uWSGI. Then create these three
+as in the previous example. These are the two entry points for uWSGI. Then create these three
 ini-files, one for the emperor, say ``uwsgi.ini``:
 
 .. code-block:: ini
@@ -229,8 +229,8 @@ To the directory named ``vassals``, add a configuration file for the Django loop
 	threads = 1
 	processes = 2
 
-Adopt the virtualenv, pathes, ports and number of threads/processes to your operating system and
-hosts capabilities.
+Adapt the virtualenv, paths, ports and threads/processes number to your specific operating system and
+host capabilities.
 
 Then start uWSGI:
 
@@ -238,7 +238,7 @@ Then start uWSGI:
 
 	uwsgi --ini uwsgi.ini
 
-This configuration scales as well, as the sample from the previous section. It shall be used if no
+This configuration scales as well as the sample from the previous section. It shall be used if no
 NGiNX server is available.
 
 Serving static files
@@ -246,7 +246,7 @@ Serving static files
 The alert reader will have noticed, that static files are not handled by this configuration. While
 in theory it is possible to configure **uWSGI** to `deliver static files`_, please note that
 **uWSGI** is not intended to completly replace a webserver. Therefore, before adding
-``route = ^/static static:/path/to/static/root`` to the emperors ini-file, consider to place them
+``route = ^/static static:/path/to/static/root`` to the emperors ini-file, consider moving them
 onto a Content Delivery Network, such as Amazon S3.
 
 .. _internal routing: https://uwsgi.readthedocs.org/en/latest/InternalRouting.html
