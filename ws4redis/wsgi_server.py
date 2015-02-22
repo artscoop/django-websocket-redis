@@ -32,11 +32,11 @@ class WebsocketWSGIServer(object):
         if environ.get('REQUEST_METHOD') != 'GET':
             raise HandshakeError('HTTP method must be a GET')
 
-        if environ.get('SERVER_PROTOCOL') != 'HTTP/1.1':
-            raise HandshakeError('HTTP server protocol must be 1.1')
-
         if environ.get('HTTP_UPGRADE', '').lower() != 'websocket':
             raise HandshakeError('Client does not wish to upgrade to a websocket')
+
+        if environ.get('SERVER_PROTOCOL') != 'HTTP/1.1':
+            raise HandshakeError('HTTP server protocol must be 1.1')
 
     def process_request(self, request):
         request.session = None
